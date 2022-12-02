@@ -1,0 +1,1 @@
+f = open("./input/2.txt", "r")
