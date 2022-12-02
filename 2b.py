@@ -30,4 +30,6 @@ for i in f:
             case 'C':
                 score += 7
 
+f.close()
+
 print(score)
