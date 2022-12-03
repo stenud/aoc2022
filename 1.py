@@ -16,5 +16,6 @@ f.close()
 
 lines.sort()
 
+print(lines)
 print(lines[-1]) #1a
 print(lines[-1]+lines[-2]+lines[-3]) #1b
