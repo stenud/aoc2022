@@ -4,6 +4,7 @@ f = open("./input/7.txt", "r")
 cwd = None
 root = Node("root")
 dirs_matching_a = []
+dirs_matching_b = []
 
 terminal = f.readlines()
 for index, item in enumerate(terminal):
@@ -43,7 +44,21 @@ def next_dir_to_check(dir):
         if not node.is_leaf:
             next_dir_to_check(node)
 
-for line in terminal: # TODO.TEST: change when ready
+def get_available_space():
+    sum = 0
+    for node in root.leaves:
+        sum += node.size
+    return 70_000_000 - sum
+
+def dirs_larger_than_needed_space(dir):
+    size = check_dir_total_size(dir)
+    if size >= 30_000_000 - available_space:
+        dirs_matching_b.append(size)
+    for node in dir.children:
+        if not node.is_leaf:
+            dirs_larger_than_needed_space(node)
+
+for line in terminal:
     if line.startswith("$ cd "):
         cwd = cd(line[5:])
     elif line.startswith("$ ls"):
@@ -54,5 +69,11 @@ for line in terminal: # TODO.TEST: change when ready
         create_file(line)
 
 next_dir_to_check(root)
+available_space = get_available_space()
+dirs_larger_than_needed_space(root)
 
 print(f"a: {sum(dirs_matching_a)}")
+dirs_matching_b.sort()
+print(f"b: {dirs_matching_b[0]}")
+
+# 1435142 is the wrong answer for b... why?
