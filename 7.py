@@ -40,7 +40,7 @@ def next_dir_to_check(dir):
     if size <= 100000:
         dirs_matching_a.append(size)
     for node in dir.children:
-        if node.is_leaf == False:
+        if not node.is_leaf:
             next_dir_to_check(node)
 
 for line in terminal: # TODO.TEST: change when ready
