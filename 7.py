@@ -22,41 +22,33 @@ def cd(argument):
 
 def create_dir(foldername):
     if search.find_by_attr(cwd, foldername, maxlevel=2) == None:
-        Node(foldername, parent=cwd)
+        Node(foldername, parent=cwd, size=None)
 
 def create_file(fileinfo):
     size, name = fileinfo.split(' ')
     size = int(size)
-    if search.find_by_attr(cwd, name, maxlevel=2) == None:
-        Node(name, parent=cwd, size=size)
+
+    for node in cwd.children:
+        if ((node.name == name) & (node.size != None)):
+            return 0
+    Node(name, parent=cwd, size=size)
 
 def check_dir_total_size(dir):
     sum = 0
     for node in dir.leaves:
-        sum += node.size
+        if node.size != None:
+            sum += node.size
     return sum
 
 def next_dir_to_check(dir):
     size = check_dir_total_size(dir)
     if size <= 100000:
         dirs_matching_a.append(size)
-    for node in dir.children:
-        if not node.is_leaf:
-            next_dir_to_check(node)
-
-def get_available_space():
-    sum = 0
-    for node in root.leaves:
-        sum += node.size
-    return 70_000_000 - sum
-
-def dirs_larger_than_needed_space(dir):
-    size = check_dir_total_size(dir)
     if size >= 30_000_000 - available_space:
         dirs_matching_b.append(size)
     for node in dir.children:
         if not node.is_leaf:
-            dirs_larger_than_needed_space(node)
+            next_dir_to_check(node)
 
 for line in terminal:
     if line.startswith("$ cd "):
@@ -68,12 +60,11 @@ for line in terminal:
     else: # files
         create_file(line)
 
-next_dir_to_check(root)
-available_space = get_available_space()
-dirs_larger_than_needed_space(root)
+available_space = 70_000_000 - check_dir_total_size(root)
+print(available_space)
 
+next_dir_to_check(root)
 print(f"a: {sum(dirs_matching_a)}")
+
 dirs_matching_b.sort()
 print(f"b: {dirs_matching_b[0]}")
-
-# 1435142 is the wrong answer for b... why?
